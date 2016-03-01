@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Genos</string>
+    <string name="app_nameCV">Genos</string>
+
+    <string name="BT_capture">Capture</string>
+    <string name="Effect_MONO">Mono effect</string>
+    <string name="Effect_NONE">None effect</string>
+    <string name="title_activity_main2_test">Main2Test</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
