@@ -12,13 +12,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.angel.xamera.Segmentation.HistType.HORIZONTAL;
+
 /**
  * Created by angel on 12/1/15.
  */
 public class Segmentation {
 
     // TODO : Finished (from C++ To Java).
-    public Mat _imgBW;
+    private static final String TAG = "*WTF";
+    public Mat _imgBW = new Mat();
+    public Mat _img = new Mat();
+    public String msg;
     public class Candidate{
         public int timeRepeated;
         public int value;
@@ -61,6 +66,25 @@ public class Segmentation {
 
     }
 
+    public void Start(){
+        ArrayList<Integer> allLines = calculateBackProjection(_imgBW,HistType.VERTICAL);
+        // ArrayList<Mat> linesImages  = getAllImagesLines(_imgBW); // Error(1)->averageLineHeight.
+        // int GH = averageLineHeight(allLines);
+
+        // Visualizaton [ important NOW ].
+        // Clean
+        _img.create(_imgBW.rows(),_imgBW.cols(),CvType.CV_8UC1);
+
+        // Draw In image.
+        for (int i = 0; i < _img.cols(); ++i) {
+            for (int j = 0; j < allLines.get(i); ++j) {
+                _img.put(i, j,new byte[]{(byte)255});
+            }
+        }
+
+        msg = String.valueOf(allLines.size()); //
+    }
+
     public Segmentation(Mat image){
         this._imgBW.create(image.rows(),image.cols(),image.type());
     }
@@ -68,6 +92,8 @@ public class Segmentation {
     public ArrayList<Integer> calculateBackProjection(Mat imageIn, HistType type) {
         // Extracting Graph Values from a Matrix Image(CV_8u).
         ArrayList<Integer> tempList = new ArrayList<>();
+        tempList.clear();
+        Log.d(TAG, "Start..access calculeProjections");
         int x;
         switch (type) {
             case HORIZONTAL:
@@ -78,15 +104,16 @@ public class Segmentation {
                     }
                     tempList.add(x);
                 }
+                break;
             case VERTICAL:
                 for (int i = 0; i < imageIn.cols(); ++i) {
                     x = 0;
                     for (int j = 0; j < imageIn.rows(); ++j) {
-                        if (imageIn.get(i, j)[0] == 0) x++;
+                        if (imageIn.get(j, i)[0] == 0) x++; // takes me alot of time :(
                     }
                     tempList.add(x);
                 }
-            break;
+                break;
         }
         return tempList;
     }
@@ -143,10 +170,11 @@ public class Segmentation {
         geoLines.clear();
 
         int average = averageLineHeight(HistDATA);
+        Log.d(TAG," average : "+String.valueOf(average));
         Line L = new Line();
 
         int threshold = 0;
-        Boolean lock = false;
+        Boolean mLock = false;
         if(!HistDATA.isEmpty())
         {
             int i=0;
@@ -156,18 +184,18 @@ public class Segmentation {
                 if(HistDATA.get(i) > threshold)
                 {
                     L.start = i-1;
-                    lock = true;
+                    mLock = true;
                     i++;
                     j++;
 
-                    while (lock)
+                    while (mLock)
                     {
                         if(HistDATA.get(i) <= threshold)
                         {
                             if(j >= average ){
                                 L.end = i+1;
                                 geoLines.add(L); // this is it <<<<----- [ Cricial ].
-                                lock=false;
+                                mLock=false;
                                 j=-1;
                             }
                         }
@@ -209,7 +237,7 @@ public class Segmentation {
 
         // image.copyTo(_imgBW); <= TODO : histogram projection visualization. < LATER >
         // Vertical Histogram.
-        ArrayList<Integer> H_HistDATA = calculateBackProjection(image,HistType.HORIZONTAL);
+        ArrayList<Integer> H_HistDATA = calculateBackProjection(image, HistType.VERTICAL); // TODO ( Vertical  phone || )
 
         //! [ 03/03/2015  21:49] CALL FOR METHODES <? Wandring ?>
         this.lineDetection(H_HistDATA);
@@ -224,11 +252,11 @@ public class Segmentation {
         {
             for (int j = 0; j < image.cols(); ++j)
             {
-                _imgBW.at<uchar>((geoLines.at(i)).start,j) = 150;
-                _imgBW.at<uchar>((geoLines.at(i)).end,j)   = 127;
+                _imgBW.put((geoLines.get(i)).start,j,new byte[]{(byte)150});
+                _imgBW.put((geoLines.get(i)).end, j, new byte[]{(byte)127});
             }
-        }
-        _imgBW.copyTo(image);*/
+        }*/
+        //_imgBW.copyTo(image);
         return allLinesImages;
 
     }
@@ -376,7 +404,7 @@ public class Segmentation {
             int PosBaseLine = 0;
             int max = 0;
 
-            HDataHist = calculateBackProjection(imageIn,HistType.HORIZONTAL);
+            HDataHist = calculateBackProjection(imageIn, HORIZONTAL);
             // GET [x_Start-x_End] calculate THICKNESS [ 44% / 22%] >> [50% / 33%] >> Solution Inchallah [85% / 55%] >> Critic [20% / 20%]X
             // >> Emmm [85% / 70%]  >>
             int paramTop = 85; int paramButtom = 80;
@@ -410,7 +438,7 @@ public class Segmentation {
             //  Entire New Pure Image.
             Mat part = copyRect(imageIn,x_Start,y_Start,x_End,y_End);
             // Getting the Right width of the zone BaseLine [ PROPOSED ].
-            HDataHist = calculateBackProjection(part,HistType.HORIZONTAL);
+            HDataHist = calculateBackProjection(part, HORIZONTAL);
             for(int i=0; i<HDataHist.size();i++)
             {
                 if(max < HDataHist.get(i) ){ max = HDataHist.get(i); PosBaseLine = i; }
@@ -615,7 +643,7 @@ public class Segmentation {
 
         // Vertical Histogram.
         ArrayList<Integer> H_HistDATA = new ArrayList<>();
-        H_HistDATA = calculateBackProjection(_imgBW,HistType.HORIZONTAL);
+        H_HistDATA = calculateBackProjection(_imgBW, HORIZONTAL);
         int max = 0;
         for(int i=0; i< H_HistDATA.size();i++)
         {

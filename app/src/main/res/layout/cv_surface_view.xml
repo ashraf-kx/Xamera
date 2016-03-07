@@ -13,7 +13,9 @@
             android:layout_height= "fill_parent"
             android:visibility   = "gone"
             opencv:show_fps      = "true"
-            opencv:camera_id     = "any">
+            opencv:camera_id     = "any"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
 
             <!--RelativeLayout
                 android:layout_width  = "match_parent"
@@ -32,12 +34,30 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="THIS BUTTON"/>
+            android:text="segmentation"
+            android:id="@+id/button" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cut"
+            android:id="@+id/switcher"
+            android:checked="false"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/button"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button" />
 
     </RelativeLayout>
 </RelativeLayout>

@@ -1,10 +1,11 @@
 package com.example.angel.xamera;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.TermCriteria;
 import org.opencv.ml.SVM;
 
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -13,11 +14,12 @@ import java.util.ArrayList;
 public class Recognition extends SVM {
     // TODO : Recognition thing Here.
 
-    TermCriteria mTermCriteria = new TermCriteria();
+    private TermCriteria mTermCriteria = new TermCriteria();
+    protected String AllLettres;
 
     protected Recognition(long addr) {
         super(addr);
-
+        // setSVMParameters();
     }
 
     public float diagonalAverage(Mat mask){
@@ -114,30 +116,83 @@ public class Recognition extends SVM {
 
     // public int countCXX(Mat image);
 
-    /*public void loadTrainingFile(String fileName){
-        if(!fileName.isEmpty()) this.; //load(fileName.toStdString().c_str());
+    public void loadTrainingFile(String fileName){
+        //if(!fileName.isEmpty()) super.load(fileName);
     }
 
-    void    loadTrainingFile(QString fileName);
-    void    saveTraining(QString fileName);
-    void    loadLabels(QString labels);*/
+    public void saveTraining(String fileName){
+        if(!fileName.isEmpty()) super.save(fileName);
+    }
+
+    public void loadLabels(String labels){
+        AllLettres ="ﻷ/ﻸ/ﻻ/ﻼ/­ﺂ/£/¤/ﺄ/ﺎ/ب/ت/ث/،/ج/ح/خ/٠/١/٢/٣/٤/٥/٦/٧/٨/٩/ف/؛/س/ش/ص/؟/¢/ء/آ/أ/ؤ/ﻊ/ﺋ/ا/ﺑ/ة/ﺗ/ﺛ/ﺟ/ﺣ/ﺧ/د/ذ/ر/ز/ﺳ/ﺷ/ﺻ/ﺿ/ط/ظ/ﻋ/ﻏ/¦/¬/÷/×/ع/ـ/ﻓ/ﻗ/ﻛ/ﻟ/ﻣ/ﻧ/ﻫ/و/ى/ﻳ/ض/ﻌ/ﻎ/غ/م/ن/ه/ﻬ/ﻰ/ﻲ/ﻐ/ق/ﻵ/ﻶ/ل/ك/ي";
+    }
+
+    public void trainTheMachine(Mat trainingSet,Mat labels){
+        if(!this.isTrained()){
+            this.train(trainingSet,1,labels);
+        }
+    }
+
+    public String recognizeTest(Mat TestingSet){
+        Mat results = new Mat();
+        this.predict(TestingSet,results,0);
+        return "halllo";
+    }
+
+    public String recognize(Mat Sample2Recognize){
+        Mat results = new Mat();
+        this.predict(Sample2Recognize,results,0);
+        return "hllo";
+    }
+
+    public Mat getTrainingSet(ArrayList<Mat> CharactersSet){ // TODO the samething goes with getTestingSet.
+        Mat trainingSet = new Mat();
+        ArrayList<ArrayList<Float>> sequanceVectorsSet;
+        sequanceVectorsSet = new ArrayList<>();
+        sequanceVectorsSet.clear();
+
+        for (int i = 0; i < CharactersSet.size(); ++i) {
+            sequanceVectorsSet.add(extractFeaturesVector(CharactersSet.get(i)));
+        }
+        // SWITCH from QT-LIST >> OPENCV Mat.
+        trainingSet.create(sequanceVectorsSet.size(),sequanceVectorsSet.get(0).size(), CvType.CV_32FC1);
+        for (int i = 0; i < sequanceVectorsSet.size(); ++i) {
+            ArrayList<Float> list = sequanceVectorsSet.get(i);
+            for (int j = 0; j < list.size(); ++j) {
+                trainingSet.get(i,j,new float[]{list.get(j).floatValue()});
+            }
+        }
+
+        sequanceVectorsSet.clear();
+        return trainingSet;
+    }
+
+    public Mat getTestingSet(ArrayList<Mat> CharactersSet){
+        Mat trainingSet = new Mat();
+        ArrayList<ArrayList<Float>> sequanceVectorsSet;
+        sequanceVectorsSet = new ArrayList<>();
+        sequanceVectorsSet.clear();
+
+        for (int i = 0; i < CharactersSet.size(); ++i) {
+            sequanceVectorsSet.add(extractFeaturesVector(CharactersSet.get(i)));
+        }
+        // SWITCH from QT-LIST >> OPENCV Mat.
+        trainingSet.create(sequanceVectorsSet.size(),sequanceVectorsSet.get(0).size(), CvType.CV_32FC1);
+        for (int i = 0; i < sequanceVectorsSet.size(); ++i) {
+            ArrayList<Float> list = sequanceVectorsSet.get(i);
+            for (int j = 0; j < list.size(); ++j) {
+                trainingSet.get(i,j,new float[]{list.get(j).floatValue()});
+            }
+        }
+
+        sequanceVectorsSet.clear();
+        return trainingSet;
+    }
 }
 
-/*
+// TODO .
+// Load Labels (set of Characters from res/values => String (Spilt after that ) & [ more than one language ].
+// remove Dump use of Array<Array> thing.
+// Define words , use your brain Plz.
 
-
-
-
-
-
-public slots:
-    Mat     getTrainingSet(QList<Mat> CharactersSet);
-    Mat     getTestingSet(QList<Mat> CharactersSet);
-    void    trainTheMachine(Mat trainingSet);
-    void    loadTrainingFile(QString fileName);
-    void    saveTraining(QString fileName);
-    void    loadLabels(QString labels);
-    QString recognize(Mat TestingSet);
-    QString recognizeTest(Mat TestingSet);
-
- */

@@ -9,7 +9,7 @@ import org.opencv.imgproc.Imgproc;
  * Created by angel on 12/1/15.
  */
 public class Preprocess extends Mat {
-    // Multi-Threaded Operations.
+
     // TODO: [ GrayScale, Adaptive Threshold(All), Candy, BlackWhite, Contour, Thing, .....]
 
     public static Mat Binarization(Mat inputFrame){
@@ -19,29 +19,6 @@ public class Preprocess extends Mat {
         return inputFrame;
     }
 
-
-    /*
-    public static Mat copyRect(Mat image,int x1,int y1,int x2,int y2)
-    {
-        int ii=0;
-        int jj=0;
-        int rows = x2-x1;
-        int cols = y2-y1;
-
-        Mat partImage = new Mat(rows,cols, image.type());
-        for(int i=x1; i<x2; i++)
-        {
-            jj=0;
-            for(int j=y1; j<y2;j++)
-            {
-               // partImage.put(ii,jj) = image.get(i,j,);
-                jj++;
-            }
-            ii++;
-        }
-        return partImage;
-    }*/
-    // TODO: [ GrayScale, Adaptive Threshold(All), Candy, BlackWhite, Contour, Thing, .....]
 
 
 }
